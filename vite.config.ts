@@ -21,4 +21,9 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    sourcemap: true,
+    // Ensure assets are loaded correctly when served from a subdirectory
+    assetsDir: "assets"
+  }
 }));

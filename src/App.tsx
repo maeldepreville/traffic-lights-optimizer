@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,12 +9,25 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Determine the base URL from the current pathname
+// This allows the app to work when deployed to a subdirectory
+const getBasename = () => {
+  // When in development, use root path
+  if (import.meta.env.DEV) {
+    return "/";
+  }
+  
+  // In production, check if we're in a subdirectory
+  const path = window.location.pathname;
+  return path.includes("traffic-simulator") ? "/traffic-simulator" : "/";
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={getBasename()}>
         <Routes>
           <Route path="/" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
