@@ -24,7 +24,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   };
   
   // Determine if the improvement is positive (better) or negative (worse)
-  const isImprovement = preferLower ? improvement > 0 : improvement < 0;
+  const isImprovement = preferLower ? improvement < 0 : improvement > 0;
   const absImprovement = Math.abs(improvement);
   
   return (

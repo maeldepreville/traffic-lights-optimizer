@@ -35,7 +35,8 @@ export interface SimulationMetrics {
 export const runSimulationStep = (state: SimulationState): SimulationState => {
   // Process game theory system
   let gameTheorySystem = { ...state.gameTheorySystem };
-  gameTheorySystem = addRandomTraffic(gameTheorySystem, calculateNewVehicles(state.trafficRate));
+  const newVehiclesCount = calculateNewVehicles(state.trafficRate);
+  gameTheorySystem = addRandomTraffic(gameTheorySystem, newVehiclesCount);
   gameTheorySystem = processTrafficMovement(gameTheorySystem);
   gameTheorySystem = makeGameTheoryDecision(gameTheorySystem);
   
@@ -49,7 +50,7 @@ export const runSimulationStep = (state: SimulationState): SimulationState => {
   
   // Process fixed timing system
   let fixedTimingSystem = { ...state.fixedTimingSystem };
-  fixedTimingSystem = addRandomTraffic(fixedTimingSystem, calculateNewVehicles(state.trafficRate));
+  fixedTimingSystem = addRandomTraffic(fixedTimingSystem, newVehiclesCount);
   fixedTimingSystem = processTrafficMovement(fixedTimingSystem);
   fixedTimingSystem = fixedTimingSimulation(fixedTimingSystem);
   
@@ -120,21 +121,30 @@ export const calculateMetrics = (state: SimulationState): SimulationMetrics => {
   );
   const ftAvgQueue = ftTotalQueue / state.fixedTimingSystem.lights.length;
   
-  // Estimate throughput (total vehicles processed)
-  // This is a simplified calculation based on wait time and simulation ticks
-  const gtThroughput = state.simulationTick * state.gameTheorySystem.lights.length - state.gameTheorySystem.totalWaitTime;
-  const ftThroughput = state.simulationTick * state.fixedTimingSystem.lights.length - state.fixedTimingSystem.totalWaitTime;
+  // Calculate throughput (vehicles that have passed through the intersection)
+  // Track the number of vehicles that were removed from queues
+  const gtVehiclesRemoved = state.gameTheorySystem.lights.reduce(
+    (sum, light) => sum + (light.isGreen ? 1 : 0), 0
+  );
+  
+  const ftVehiclesRemoved = state.fixedTimingSystem.lights.reduce(
+    (sum, light) => sum + (light.isGreen ? 1 : 0), 0
+  );
+  
+  // We calculate cumulative throughput based on simulation tick
+  const gtThroughput = state.simulationTick > 0 ? gtVehiclesRemoved * state.simulationTick : 0;
+  const ftThroughput = state.simulationTick > 0 ? ftVehiclesRemoved * state.simulationTick : 0;
   
   return {
     gameTheory: {
       totalWaitTime: state.gameTheorySystem.totalWaitTime,
       avgQueueLength: gtAvgQueue,
-      throughput: Math.max(0, gtThroughput)
+      throughput: gtThroughput
     },
     fixedTiming: {
       totalWaitTime: state.fixedTimingSystem.totalWaitTime,
       avgQueueLength: ftAvgQueue,
-      throughput: Math.max(0, ftThroughput)
+      throughput: ftThroughput
     }
   };
 };

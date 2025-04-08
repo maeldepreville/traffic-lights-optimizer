@@ -315,29 +315,27 @@ export const fixedTimingSimulation = (
   });
   
   // If the active group just finished its yellow phase, activate the next group
-  if (isActiveGroupYellow) {
-    // Check if all lights in the active group are no longer yellow
-    const allYellowLightsFinished = !updatedSystem.lights.some(
-      l => l.syncGroup === activeGroup && l.isYellow
-    );
+  const allYellowLightsFinished = !updatedSystem.lights.some(
+    l => l.syncGroup === activeGroup && l.isYellow
+  );
+  
+  if (isActiveGroupYellow && allYellowLightsFinished) {
+    // Find the next group to activate
+    const currentIndex = syncGroups.indexOf(activeGroup);
+    const nextIndex = (currentIndex + 1) % syncGroups.length;
+    const nextGroup = syncGroups[nextIndex];
     
-    if (allYellowLightsFinished) {
-      const currentIndex = syncGroups.indexOf(activeGroup);
-      const nextIndex = (currentIndex + 1) % syncGroups.length;
-      const nextGroup = syncGroups[nextIndex];
-      
-      // Turn all lights in the next group green
-      updatedSystem.lights = updatedSystem.lights.map(light => {
-        if (light.syncGroup === nextGroup) {
-          return {
-            ...light,
-            isGreen: true,
-            greenTimeElapsed: 0
-          };
-        }
-        return light;
-      });
-    }
+    // Turn all lights in the next group green
+    updatedSystem.lights = updatedSystem.lights.map(light => {
+      if (light.syncGroup === nextGroup) {
+        return {
+          ...light,
+          isGreen: true,
+          greenTimeElapsed: 0
+        };
+      }
+      return light;
+    });
   }
   
   return updatedSystem;
