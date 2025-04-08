@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { SimulationMetrics } from '@/utils/trafficSimulation';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import MetricCard from './metrics/MetricCard';
+import HistoricalChart from './metrics/HistoricalChart';
+import StatsTable from './metrics/StatsTable';
 
 interface MetricsDisplayProps {
   metrics: SimulationMetrics;
@@ -26,14 +26,6 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
   
   const throughputImprovement = metrics.fixedTiming.throughput > 0 ?
     ((metrics.gameTheory.throughput - metrics.fixedTiming.throughput) / metrics.fixedTiming.throughput) * 100 : 0;
-  
-  // Filter historical data to show only the last 20 data points
-  const limitedHistoricalData = historicalData.slice(-20);
-
-  // Helper function to safely format numbers
-  const formatValue = (value: any): string => {
-    return typeof value === 'number' ? value.toFixed(1) : String(value);
-  };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
@@ -69,152 +61,15 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
       </div>
       
       {/* Line Chart for Historical Data */}
-      <div className="flex-grow border border-gray-200 rounded-md p-3 bg-white">
-        <h4 className="text-sm font-medium mb-2 text-center">Historical Performance</h4>
-        <ChartContainer 
-          className="h-[200px]"
-          config={{
-            gameTheoryWait: { label: "Game Theory Wait Time", color: "#10b981" },
-            fixedTimingWait: { label: "Fixed Timing Wait Time", color: "#ef4444" },
-            gameTheoryQueue: { label: "Game Theory Queue", color: "#0ea5e9" },
-            fixedTimingQueue: { label: "Fixed Timing Queue", color: "#f97316" }
-          }}
-        >
-          <LineChart data={limitedHistoricalData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="tick" 
-              label={{ value: 'Tick', position: 'insideBottomRight', offset: 0 }}
-              ticks={limitedHistoricalData.length > 0 ? 
-                [limitedHistoricalData[0].tick, limitedHistoricalData[limitedHistoricalData.length - 1].tick] : 
-                []}
-            />
-            <YAxis />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Line 
-              type="monotone" 
-              dataKey="gameTheoryWait" 
-              stroke="#10b981" 
-              strokeWidth={2} 
-              dot={false}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="fixedTimingWait" 
-              stroke="#ef4444" 
-              strokeWidth={2} 
-              dot={false}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="gameTheoryQueue" 
-              stroke="#0ea5e9" 
-              strokeWidth={2} 
-              strokeDasharray="5 5"
-              dot={false}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="fixedTimingQueue" 
-              stroke="#f97316" 
-              strokeWidth={2} 
-              strokeDasharray="5 5"
-              dot={false}
-            />
-          </LineChart>
-        </ChartContainer>
-      </div>
+      <HistoricalChart historicalData={historicalData} />
       
       {/* Detailed Stats Table */}
-      <div className="mt-4">
-        <h4 className="text-sm font-medium mb-2">Detailed Statistics</h4>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Metric</TableHead>
-              <TableHead>Game Theory</TableHead>
-              <TableHead>Fixed Timing</TableHead>
-              <TableHead>Improvement</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Total Wait Time</TableCell>
-              <TableCell>{metrics.gameTheory.totalWaitTime.toFixed(1)}</TableCell>
-              <TableCell>{metrics.fixedTiming.totalWaitTime.toFixed(1)}</TableCell>
-              <TableCell className={waitTimeImprovement > 0 ? "text-green-600" : "text-amber-600"}>
-                {waitTimeImprovement.toFixed(1)}%
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Avg Queue Length</TableCell>
-              <TableCell>{metrics.gameTheory.avgQueueLength.toFixed(1)}</TableCell>
-              <TableCell>{metrics.fixedTiming.avgQueueLength.toFixed(1)}</TableCell>
-              <TableCell className={queueImprovement > 0 ? "text-green-600" : "text-amber-600"}>
-                {queueImprovement.toFixed(1)}%
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Throughput</TableCell>
-              <TableCell>{metrics.gameTheory.throughput.toFixed(1)}</TableCell>
-              <TableCell>{metrics.fixedTiming.throughput.toFixed(1)}</TableCell>
-              <TableCell className={throughputImprovement > 0 ? "text-green-600" : "text-amber-600"}>
-                {throughputImprovement.toFixed(1)}%
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  );
-};
-
-interface MetricCardProps {
-  title: string;
-  gameTheory: number;
-  fixedTiming: number;
-  improvement: number;
-  unit: string;
-  preferLower: boolean;
-}
-
-const MetricCard: React.FC<MetricCardProps> = ({ 
-  title, 
-  gameTheory, 
-  fixedTiming, 
-  improvement,
-  unit,
-  preferLower
-}) => {
-  // Format numbers nicely
-  const formatNumber = (num: number) => {
-    return num.toFixed(1);
-  };
-  
-  // Determine if the improvement is positive (better) or negative (worse)
-  const isImprovement = preferLower ? improvement > 0 : improvement < 0;
-  const absImprovement = Math.abs(improvement);
-  
-  return (
-    <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
-      <h4 className="text-sm font-medium text-gray-600 mb-2">{title}</h4>
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div>
-          <div className="text-gray-500">Game Theory</div>
-          <div className="font-bold text-emerald-600">{formatNumber(gameTheory)} {unit}</div>
-        </div>
-        <div>
-          <div className="text-gray-500">Fixed Timing</div>
-          <div className="font-bold text-red-500">{formatNumber(fixedTiming)} {unit}</div>
-        </div>
-      </div>
-      <div className={`mt-2 text-xs font-medium ${isImprovement ? 'text-green-600' : 'text-amber-600'}`}>
-        {isImprovement ? (
-          <span>Improved by {absImprovement.toFixed(1)}%</span>
-        ) : (
-          <span>Decreased by {absImprovement.toFixed(1)}%</span>
-        )}
-      </div>
+      <StatsTable 
+        metrics={metrics}
+        waitTimeImprovement={waitTimeImprovement}
+        queueImprovement={queueImprovement}
+        throughputImprovement={throughputImprovement}
+      />
     </div>
   );
 };
