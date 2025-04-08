@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TrafficIntersection from '@/components/TrafficIntersection';
 import MetricsDisplay from '@/components/MetricsDisplay';
 import ConfigPanel from '@/components/ConfigPanel';
-import { initializeTrafficSystem } from '@/utils/gameTheory';
+import { initializeTrafficSystem } from '@/utils/trafficSystem';
 import { 
   SimulationState, 
   runSimulationStep, 

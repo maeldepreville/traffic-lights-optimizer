@@ -1,7 +1,6 @@
-
 import React from 'react';
 import TrafficLight from './TrafficLight';
-import { TrafficSystem } from '@/utils/gameTheory';
+import { TrafficSystem } from '@/utils/trafficSystem';
 
 interface TrafficIntersectionProps {
   system: TrafficSystem;

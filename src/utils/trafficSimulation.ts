@@ -1,4 +1,3 @@
-
 import { 
   TrafficSystem, 
   addRandomTraffic, 
@@ -6,7 +5,7 @@ import {
   makeGameTheoryDecision,
   fixedTimingSimulation,
   validateNoConflicts
-} from './gameTheory';
+} from './trafficSystem';
 
 export interface SimulationState {
   gameTheorySystem: TrafficSystem;
