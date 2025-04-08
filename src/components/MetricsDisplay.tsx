@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SimulationMetrics } from '@/utils/trafficSimulation';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -26,24 +26,6 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
   
   const throughputImprovement = metrics.fixedTiming.throughput > 0 ?
     ((metrics.gameTheory.throughput - metrics.fixedTiming.throughput) / metrics.fixedTiming.throughput) * 100 : 0;
-
-  // Data for the wait time comparison pie chart
-  const waitTimeData = [
-    { name: 'Game Theory', value: metrics.gameTheory.totalWaitTime, color: '#10b981' },
-    { name: 'Fixed Timing', value: metrics.fixedTiming.totalWaitTime, color: '#ef4444' }
-  ];
-  
-  // Data for the queue length comparison pie chart
-  const queueLengthData = [
-    { name: 'Game Theory', value: metrics.gameTheory.avgQueueLength, color: '#0ea5e9' },
-    { name: 'Fixed Timing', value: metrics.fixedTiming.avgQueueLength, color: '#f97316' }
-  ];
-
-  // Data for the throughput comparison pie chart
-  const throughputData = [
-    { name: 'Game Theory', value: metrics.gameTheory.throughput, color: '#8b5cf6' },
-    { name: 'Fixed Timing', value: metrics.fixedTiming.throughput, color: '#ec4899' }
-  ];
   
   // Filter historical data to show only the last 20 data points
   const limitedHistoricalData = historicalData.slice(-20);
@@ -84,78 +66,6 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
           unit="vehicles"
           preferLower={false}
         />
-      </div>
-      
-      {/* Pie Charts Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 h-[200px]">
-        <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
-          <h4 className="text-sm font-medium text-center mb-2">Wait Time Distribution</h4>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={waitTimeData}
-                cx="50%"
-                cy="50%"
-                innerRadius={30}
-                outerRadius={60}
-                paddingAngle={5}
-                dataKey="value"
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              >
-                {waitTimeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [formatValue(value) + " ticks", 'Wait Time']} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        
-        <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
-          <h4 className="text-sm font-medium text-center mb-2">Queue Length Distribution</h4>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={queueLengthData}
-                cx="50%"
-                cy="50%"
-                innerRadius={30}
-                outerRadius={60}
-                paddingAngle={5}
-                dataKey="value"
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              >
-                {queueLengthData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [formatValue(value) + " vehicles", 'Queue Length']} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        
-        <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
-          <h4 className="text-sm font-medium text-center mb-2">Throughput Distribution</h4>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={throughputData}
-                cx="50%"
-                cy="50%"
-                innerRadius={30}
-                outerRadius={60}
-                paddingAngle={5}
-                dataKey="value"
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              >
-                {throughputData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [formatValue(value) + " vehicles", 'Throughput']} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
       </div>
       
       {/* Line Chart for Historical Data */}

@@ -1,4 +1,3 @@
-
 /**
  * Game Theory Traffic Light Optimization Algorithm
  */
@@ -277,11 +276,7 @@ export const fixedTimingSimulation = (
         const newYellowTimeRemaining = light.yellowTimeRemaining - 1;
         
         if (newYellowTimeRemaining <= 0) {
-          // Yellow phase over, find next group to activate
-          const currentIndex = syncGroups.indexOf(activeGroup);
-          const nextIndex = (currentIndex + 1) % syncGroups.length;
-          
-          // This light turns red, but we'll handle the next group outside this map
+          // Yellow phase over, return to red state (not green)
           return {
             ...light,
             isYellow: false,
@@ -320,22 +315,29 @@ export const fixedTimingSimulation = (
   });
   
   // If the active group just finished its yellow phase, activate the next group
-  if (isActiveGroupYellow && !updatedSystem.lights.some(l => l.syncGroup === activeGroup && l.isYellow)) {
-    const currentIndex = syncGroups.indexOf(activeGroup);
-    const nextIndex = (currentIndex + 1) % syncGroups.length;
-    const nextGroup = syncGroups[nextIndex];
+  if (isActiveGroupYellow) {
+    // Check if all lights in the active group are no longer yellow
+    const allYellowLightsFinished = !updatedSystem.lights.some(
+      l => l.syncGroup === activeGroup && l.isYellow
+    );
     
-    // Turn all lights in the next group green
-    updatedSystem.lights = updatedSystem.lights.map(light => {
-      if (light.syncGroup === nextGroup) {
-        return {
-          ...light,
-          isGreen: true,
-          greenTimeElapsed: 0
-        };
-      }
-      return light;
-    });
+    if (allYellowLightsFinished) {
+      const currentIndex = syncGroups.indexOf(activeGroup);
+      const nextIndex = (currentIndex + 1) % syncGroups.length;
+      const nextGroup = syncGroups[nextIndex];
+      
+      // Turn all lights in the next group green
+      updatedSystem.lights = updatedSystem.lights.map(light => {
+        if (light.syncGroup === nextGroup) {
+          return {
+            ...light,
+            isGreen: true,
+            greenTimeElapsed: 0
+          };
+        }
+        return light;
+      });
+    }
   }
   
   return updatedSystem;
