@@ -48,6 +48,11 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
   // Filter historical data to show only the last 20 data points
   const limitedHistoricalData = historicalData.slice(-20);
 
+  // Helper function to safely format numbers
+  const formatValue = (value: any): string => {
+    return typeof value === 'number' ? value.toFixed(1) : String(value);
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
       <h3 className="text-lg font-medium mb-4 text-center">Performance Metrics</h3>
@@ -101,7 +106,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => [`${value.toFixed(1)} ticks`, 'Wait Time']} />
+              <Tooltip formatter={(value) => [formatValue(value) + " ticks", 'Wait Time']} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -124,7 +129,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => [`${value.toFixed(1)} vehicles`, 'Queue Length']} />
+              <Tooltip formatter={(value) => [formatValue(value) + " vehicles", 'Queue Length']} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -147,7 +152,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => [`${value.toFixed(1)} vehicles`, 'Throughput']} />
+              <Tooltip formatter={(value) => [formatValue(value) + " vehicles", 'Throughput']} />
             </PieChart>
           </ResponsiveContainer>
         </div>
