@@ -1,4 +1,3 @@
-
 # Welcome to your Lovable project
 
 ## Project info
@@ -98,9 +97,49 @@ npm run build
 
 2. Copy the contents of the `dist` folder to a subdirectory on your main website (e.g., `/traffic-simulator`).
 
-3. Add a link to the simulation from your main website:
+3. Create an index.html file in your main website directory with a link to the simulation:
+
 ```html
-<a href="/traffic-simulator/">Traffic Simulator</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+</head>
+<body>
+    <h1>Welcome to My Website</h1>
+    <p>
+        <a href="traffic-simulator/index.html">Launch Traffic Simulator</a>
+    </p>
+    
+    <!-- Alternatively, you can embed it directly: -->
+    <!-- 
+    <h2>Embedded Simulator:</h2>
+    <iframe 
+        src="traffic-simulator/index.html" 
+        width="100%" 
+        height="800px" 
+        frameborder="0"
+        title="Traffic Harmony Orchestrator">
+    </iframe>
+    -->
+</body>
+</html>
 ```
+
+4. Important: Make sure your folder structure looks like this:
+```
+your-website/
+├── index.html              # Your main HTML file with the link
+└── traffic-simulator/      # The folder containing the simulator
+    ├── index.html          # The simulator's HTML file
+    ├── assets/             # The simulator's assets
+    └── ...                 # Other simulator files
+```
+
+5. For local testing, use a web server like:
+   - Python's built-in server: `python -m http.server`
+   - Node's http-server: Install with `npm install -g http-server` and run with `http-server`
 
 Make sure your main website's server is configured to serve static files from the subdirectory.
