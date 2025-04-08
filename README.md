@@ -1,3 +1,4 @@
+
 # Welcome to your Lovable project
 
 ## Project info
@@ -71,3 +72,35 @@ Yes it is!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Integrating with an existing website
+
+### Option 1: Embed as an iframe
+After deploying the simulation, you can embed it in your existing website:
+
+```html
+<iframe 
+  src="https://your-simulation-url.com" 
+  width="100%" 
+  height="800px" 
+  frameborder="0"
+  title="Traffic Harmony Orchestrator">
+</iframe>
+```
+
+### Option 2: Serve from same domain
+To serve the simulation from a subdirectory of your main website:
+
+1. Build this project:
+```
+npm run build
+```
+
+2. Copy the contents of the `dist` folder to a subdirectory on your main website (e.g., `/traffic-simulator`).
+
+3. Add a link to the simulation from your main website:
+```html
+<a href="/traffic-simulator/">Traffic Simulator</a>
+```
+
+Make sure your main website's server is configured to serve static files from the subdirectory.
