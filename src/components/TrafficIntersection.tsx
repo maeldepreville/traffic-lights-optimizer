@@ -24,8 +24,13 @@ const TrafficIntersection: React.FC<TrafficIntersectionProps> = ({ system, title
       
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(lightsByGroup).map(([groupId, lights]) => (
-          <div key={groupId} className="border border-gray-200 p-3 rounded-md bg-white">
-            <h4 className="text-sm font-medium mb-2 text-gray-600">Sync Group {parseInt(groupId) + 1}</h4>
+          <div 
+            key={groupId} 
+            className={`border border-gray-200 p-3 rounded-md ${parseInt(groupId) === 0 ? 'bg-blue-50' : 'bg-green-50'}`}
+          >
+            <h4 className="text-sm font-medium mb-2 text-gray-600">
+              Sync Group {parseInt(groupId) + 1}
+            </h4>
             <div className="flex flex-wrap justify-center gap-4">
               {lights.map(light => (
                 <TrafficLight

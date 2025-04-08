@@ -1,7 +1,9 @@
 
 import React from 'react';
 import { SimulationMetrics } from '@/utils/trafficSimulation';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface MetricsDisplayProps {
   metrics: SimulationMetrics;
@@ -24,6 +26,27 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
   
   const throughputImprovement = metrics.fixedTiming.throughput > 0 ?
     ((metrics.gameTheory.throughput - metrics.fixedTiming.throughput) / metrics.fixedTiming.throughput) * 100 : 0;
+
+  // Data for the wait time comparison pie chart
+  const waitTimeData = [
+    { name: 'Game Theory', value: metrics.gameTheory.totalWaitTime, color: '#10b981' },
+    { name: 'Fixed Timing', value: metrics.fixedTiming.totalWaitTime, color: '#ef4444' }
+  ];
+  
+  // Data for the queue length comparison pie chart
+  const queueLengthData = [
+    { name: 'Game Theory', value: metrics.gameTheory.avgQueueLength, color: '#0ea5e9' },
+    { name: 'Fixed Timing', value: metrics.fixedTiming.avgQueueLength, color: '#f97316' }
+  ];
+
+  // Data for the throughput comparison pie chart
+  const throughputData = [
+    { name: 'Game Theory', value: metrics.gameTheory.throughput, color: '#8b5cf6' },
+    { name: 'Fixed Timing', value: metrics.fixedTiming.throughput, color: '#ec4899' }
+  ];
+  
+  // Filter historical data to show only the last 20 data points
+  const limitedHistoricalData = historicalData.slice(-20);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
@@ -58,50 +81,174 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, historicalData
         />
       </div>
       
-      <div className="flex-grow">
-        <ResponsiveContainer width="100%" height="100%" minHeight={200}>
-          <LineChart data={historicalData}>
+      {/* Pie Charts Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 h-[200px]">
+        <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
+          <h4 className="text-sm font-medium text-center mb-2">Wait Time Distribution</h4>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={waitTimeData}
+                cx="50%"
+                cy="50%"
+                innerRadius={30}
+                outerRadius={60}
+                paddingAngle={5}
+                dataKey="value"
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              >
+                {waitTimeData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [`${value.toFixed(1)} ticks`, 'Wait Time']} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
+          <h4 className="text-sm font-medium text-center mb-2">Queue Length Distribution</h4>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={queueLengthData}
+                cx="50%"
+                cy="50%"
+                innerRadius={30}
+                outerRadius={60}
+                paddingAngle={5}
+                dataKey="value"
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              >
+                {queueLengthData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [`${value.toFixed(1)} vehicles`, 'Queue Length']} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div className="bg-slate-50 p-3 rounded-md border border-gray-100">
+          <h4 className="text-sm font-medium text-center mb-2">Throughput Distribution</h4>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={throughputData}
+                cx="50%"
+                cy="50%"
+                innerRadius={30}
+                outerRadius={60}
+                paddingAngle={5}
+                dataKey="value"
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              >
+                {throughputData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [`${value.toFixed(1)} vehicles`, 'Throughput']} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      
+      {/* Line Chart for Historical Data */}
+      <div className="flex-grow border border-gray-200 rounded-md p-3 bg-white">
+        <h4 className="text-sm font-medium mb-2 text-center">Historical Performance</h4>
+        <ChartContainer 
+          className="h-[200px]"
+          config={{
+            gameTheoryWait: { label: "Game Theory Wait Time", color: "#10b981" },
+            fixedTimingWait: { label: "Fixed Timing Wait Time", color: "#ef4444" },
+            gameTheoryQueue: { label: "Game Theory Queue", color: "#0ea5e9" },
+            fixedTimingQueue: { label: "Fixed Timing Queue", color: "#f97316" }
+          }}
+        >
+          <LineChart data={limitedHistoricalData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="tick" label={{ value: 'Simulation Time', position: 'insideBottom', offset: -5 }} />
-            <YAxis yAxisId="left" label={{ value: 'Wait Time', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Queue Length', angle: 90, position: 'insideRight' }} />
-            <Tooltip />
-            <Legend />
+            <XAxis 
+              dataKey="tick" 
+              label={{ value: 'Tick', position: 'insideBottomRight', offset: 0 }}
+              ticks={limitedHistoricalData.length > 0 ? 
+                [limitedHistoricalData[0].tick, limitedHistoricalData[limitedHistoricalData.length - 1].tick] : 
+                []}
+            />
+            <YAxis />
+            <ChartTooltip content={<ChartTooltipContent />} />
             <Line 
-              yAxisId="left"
               type="monotone" 
               dataKey="gameTheoryWait" 
-              name="Game Theory Wait Time" 
               stroke="#10b981" 
-              activeDot={{ r: 8 }}
               strokeWidth={2} 
+              dot={false}
             />
             <Line 
-              yAxisId="left"
               type="monotone" 
               dataKey="fixedTimingWait" 
-              name="Fixed Timing Wait Time" 
               stroke="#ef4444" 
               strokeWidth={2} 
+              dot={false}
             />
             <Line 
-              yAxisId="right"
               type="monotone" 
               dataKey="gameTheoryQueue" 
-              name="Game Theory Queue" 
               stroke="#0ea5e9" 
-              strokeDasharray="5 5" 
+              strokeWidth={2} 
+              strokeDasharray="5 5"
+              dot={false}
             />
             <Line 
-              yAxisId="right"
               type="monotone" 
               dataKey="fixedTimingQueue" 
-              name="Fixed Timing Queue" 
               stroke="#f97316" 
-              strokeDasharray="5 5" 
+              strokeWidth={2} 
+              strokeDasharray="5 5"
+              dot={false}
             />
           </LineChart>
-        </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+      
+      {/* Detailed Stats Table */}
+      <div className="mt-4">
+        <h4 className="text-sm font-medium mb-2">Detailed Statistics</h4>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Metric</TableHead>
+              <TableHead>Game Theory</TableHead>
+              <TableHead>Fixed Timing</TableHead>
+              <TableHead>Improvement</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Total Wait Time</TableCell>
+              <TableCell>{metrics.gameTheory.totalWaitTime.toFixed(1)}</TableCell>
+              <TableCell>{metrics.fixedTiming.totalWaitTime.toFixed(1)}</TableCell>
+              <TableCell className={waitTimeImprovement > 0 ? "text-green-600" : "text-amber-600"}>
+                {waitTimeImprovement.toFixed(1)}%
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Avg Queue Length</TableCell>
+              <TableCell>{metrics.gameTheory.avgQueueLength.toFixed(1)}</TableCell>
+              <TableCell>{metrics.fixedTiming.avgQueueLength.toFixed(1)}</TableCell>
+              <TableCell className={queueImprovement > 0 ? "text-green-600" : "text-amber-600"}>
+                {queueImprovement.toFixed(1)}%
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Throughput</TableCell>
+              <TableCell>{metrics.gameTheory.throughput.toFixed(1)}</TableCell>
+              <TableCell>{metrics.fixedTiming.throughput.toFixed(1)}</TableCell>
+              <TableCell className={throughputImprovement > 0 ? "text-green-600" : "text-amber-600"}>
+                {throughputImprovement.toFixed(1)}%
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
