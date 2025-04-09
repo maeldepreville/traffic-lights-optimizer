@@ -1,19 +1,22 @@
-
-# Traffic Harmony Orchestrator
-
-A traffic simulation system that models and optimizes traffic flow through intersections.
+# Welcome to your Lovable project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/a42771a2-60fe-4be3-9bb8-dfcd25fa0bf6
 
-## Getting Started
+## How can I edit this code?
 
-There are several ways to run this application.
+There are several ways of editing your application.
+
+**Use Lovable**
+
+Simply visit the [Lovable Project](https://lovable.dev/projects/a42771a2-60fe-4be3-9bb8-dfcd25fa0bf6) and start prompting.
+
+Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and run the application.
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -33,28 +36,21 @@ npm i
 npm run dev
 ```
 
-## Deployment
+**Edit a file directly in GitHub**
 
-### GitHub Pages Deployment
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-This project can be easily deployed to GitHub Pages using the included GitHub Actions workflow.
+**Use GitHub Codespaces**
 
-To deploy to GitHub Pages:
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-1. Push your code to the `main` branch of your GitHub repository
-2. GitHub Actions will automatically build and deploy your app
-3. Your app will be available at: `https://[your-username].github.io/[repository-name]/`
-
-### Custom Domain
-
-If you want to use a custom domain with your GitHub Pages deployment:
-
-1. Go to your repository settings
-2. Navigate to the "Pages" section
-3. Under "Custom domain", enter your domain
-4. Follow the instructions to configure your DNS settings
-
-## Technologies Used
+## What technologies are used for this project?
 
 This project is built with:
 
@@ -64,17 +60,14 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## Integration with other websites
+## How can I deploy this project?
 
-You can embed this simulation in other websites using an iframe:
+Simply open [Lovable](https://lovable.dev/projects/a42771a2-60fe-4be3-9bb8-dfcd25fa0bf6) and click on Share -> Publish.
 
-```html
-<iframe 
-  src="https://[your-username].github.io/[repository-name]/" 
-  width="100%" 
-  height="800px" 
-  frameborder="0"
-  title="Traffic Harmony Orchestrator"
-></iframe>
-```
+## Can I connect a custom domain to my Lovable project?
 
+Yes it is!
+
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
