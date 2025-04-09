@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  base: "./", // This enables relative paths for assets
+  base: './', // This ensures assets are loaded correctly on GitHub Pages
   plugins: [
     react(),
     mode === 'development' &&
@@ -21,9 +21,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    sourcemap: true,
-    // Ensure assets are loaded correctly when served from a subdirectory
-    assetsDir: "assets"
-  }
 }));
