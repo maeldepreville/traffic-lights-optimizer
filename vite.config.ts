@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  base: '/traffic-lights-optimizer/',
   plugins: [
     react(),
     mode === 'development' &&
